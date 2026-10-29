@@ -151,9 +151,17 @@ static UITableView *GSTableViewForView(UIView *view) {
 
 // Une vue n'est aplatie que si sa table est encore en insetGrouped.
 // Si la couche A a réussi (table en .grouped), tout ce qui suit est un no-op.
+// ATTENTION (constaté dans les logs sur iOS 17.4.1) : les tables de Réglages
+// rapportent style=1 (.grouped), pas 2 (.insetGrouped) ; l'aspect "inset" vient
+// de _sectionContentInset / _sectionCornerRadius. On traite donc .grouped ET
+// .insetGrouped (aplatir une table déjà plate est sans effet).
+static inline BOOL GSStyleIsInsetLike(UITableViewStyle style) {
+    return style == UITableViewStyleInsetGrouped || style == UITableViewStyleGrouped;
+}
+
 static BOOL GSViewNeedsFlattening(UIView *view) {
     UITableView *table = GSTableViewForView(view);
-    return table && table.style == UITableViewStyleInsetGrouped;
+    return table && GSStyleIsInsetLike(table.style);
 }
 
 static UIBackgroundConfiguration *GSFlatConfiguration(UIBackgroundConfiguration *cfg) {
@@ -318,7 +326,7 @@ static void GSAdjustHeaderFooter(UITableViewHeaderFooterView *view) {
 %hook UITableView
 - (void)setSeparatorInset:(UIEdgeInsets)inset {
     // Retrait gauche d'origine conservé, séparateur jusqu'au bord droit.
-    if (self.style == UITableViewStyleInsetGrouped) inset.right = 0;
+    if (GSStyleIsInsetLike(self.style)) inset.right = 0;
     %orig(inset);
 }
 %end
@@ -498,7 +506,7 @@ static void GSInstallUIKitHooks(void) {
             %init(CollectionListConfig);
             GSLog(@"hooks UICollectionLayoutListConfiguration installes");
         } else {
-            GSLog(@"UICollectionLayoutListConfiguration : signature inattendue");
+            GSLog(@"%@", GS_ON(8) ? @"UICollectionLayoutListConfiguration : signature inattendue" : @"couche D desactivee (GS_LAYERS)");
         }
         if (GS_ON(8) && listCellClass) {
             %init(CollectionCellFlatten);
@@ -524,19 +532,19 @@ static BOOL GSInstallPreferencesHooks(void) {
         %init(EdgeSetter);
         GSLog(@"hook setEdgeToEdgeCells: installe");
     } else {
-        GSLog(@"setEdgeToEdgeCells: absent");
+        GSLog(@"setEdgeToEdgeCells: non installe (couche A desactivee ou methode absente)");
     }
     if (GS_ON(1) && GSReturnsOneOf(listClass, @selector(edgeToEdgeCells), "Bc")) {
         %init(EdgeGetter);
         GSLog(@"hook edgeToEdgeCells installe");
     } else {
-        GSLog(@"edgeToEdgeCells absent");
+        GSLog(@"edgeToEdgeCells: non installe (couche A desactivee ou methode absente)");
     }
     if (GS_ON(1) && GSReturnsOneOf(listClass, @selector(_isRegularWidth), "Bc")) {
         %init(RegularWidth);
         GSLog(@"hook _isRegularWidth installe");
     } else {
-        GSLog(@"_isRegularWidth absent");
+        GSLog(@"_isRegularWidth: non installe (couche A desactivee ou methode absente)");
     }
 
     if (GS_ON(4) && objc_getClass("PSTableCell")) {
@@ -558,7 +566,7 @@ static BOOL GSInstallPreferencesHooks(void) {
         if (![bid isEqualToString:@"com.apple.Preferences"]) return;
         GSLog(@"ctor: dylib charge dans Preferences, pid=%d", (int)getpid());
 
-        GSLog(@"v6.2 charge layers=%d (iOS %@)", (int)(GS_LAYERS), [[UIDevice currentDevice] systemVersion]);
+        GSLog(@"v6.4 charge layers=%d (iOS %@)", (int)(GS_LAYERS), [[UIDevice currentDevice] systemVersion]);
         GSInstallUIKitHooks();
 
         if (!GSInstallPreferencesHooks()) {

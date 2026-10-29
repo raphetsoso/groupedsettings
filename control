@@ -1,6 +1,6 @@
 Package: com.example.groupedsettings
 Name: GroupedSettings
-Version: 1.2.3
+Version: 1.2.4
 Architecture: iphoneos-arm64
 Description: Imite le style .grouped classique dans Réglages (cellules pleine largeur, sans coins arrondis)
 Maintainer: you
