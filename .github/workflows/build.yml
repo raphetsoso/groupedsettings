@@ -1,13 +1,9 @@
-name: Build GroupedSettings (rootless, arm64e)
+name: Build GroupedSettings17 (rootless, arm64e)
 
 # Compilation sur macOS : seul moyen d'obtenir l'ABI arm64e "new" attendue par
 # iOS 15+ (la toolchain Linux/WSL produit une ABI incompatible).
 on:
   workflow_dispatch:
-    inputs:
-      layers:
-        description: "GS_LAYERS (0=canari, 1=A, 3=A+B, 7=A+B+C, 23=+en-tetes, 31=tout)"
-        default: "1"
   push:
 
 jobs:
@@ -25,11 +21,10 @@ jobs:
           echo "THEOS=$HOME/theos" >> "$GITHUB_ENV"
 
       - name: Build (rootless)
-        run: |
-          gmake clean package THEOS_PACKAGE_SCHEME=rootless GS_LAYERS=${{ github.event.inputs.layers || '1' }}
+        run: gmake clean package FINALPACKAGE=1 THEOS_PACKAGE_SCHEME=rootless
 
       - name: Upload .deb
         uses: actions/upload-artifact@v4
         with:
-          name: GroupedSettings-deb
+          name: GroupedSettings17-deb
           path: packages/*.deb
