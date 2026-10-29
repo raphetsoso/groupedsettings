@@ -49,7 +49,7 @@ static BOOL GSSpawn(const char *path, const char *arg1) {
 // Réglages a déjà traduit un texte, la clé ne correspond plus et il reste tel quel.
 - (void)localizeSpecifiers:(NSArray *)specs {
     NSBundle *bundle = [NSBundle bundleForClass:[self class]];
-    for (id spec in specs) {
+    for (PSSpecifier *spec in specs) {
         NSString *name = [spec name];
         if (name.length) {
             [spec setName:[bundle localizedStringForKey:name value:name table:@"Root"]];
