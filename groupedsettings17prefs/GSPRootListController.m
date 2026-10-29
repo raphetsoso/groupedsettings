@@ -9,6 +9,14 @@
 - (NSArray *)loadSpecifiersFromPlistName:(NSString *)plist target:(id)target;
 @end
 
+// Déclaration minimale de PSSpecifier (utilisé uniquement via des messages).
+@interface PSSpecifier : NSObject
+- (NSString *)name;
+- (void)setName:(NSString *)name;
+- (id)propertyForKey:(NSString *)key;
+- (void)setProperty:(id)value forKey:(NSString *)key;
+@end
+
 @interface GSPRootListController : PSListController
 @end
 
@@ -29,9 +37,29 @@ static BOOL GSSpawn(const char *path, const char *arg1) {
     NSArray *specs = [self valueForKey:@"_specifiers"];
     if (!specs) {
         specs = [self loadSpecifiersFromPlistName:@"Root" target:self];
+        [self localizeSpecifiers:specs];
         [self setValue:specs forKey:@"_specifiers"];
     }
     return specs;
+}
+
+// Traduit les textes selon la langue du téléphone (les .lproj du bundle :
+// en, fr, de, it, ru, zh-Hans, zh-Hant, ja, vi, ar, es, pt ; anglais par
+// défaut). Les clés sont les textes anglais de Root.plist. Idempotent : si
+// Réglages a déjà traduit un texte, la clé ne correspond plus et il reste tel quel.
+- (void)localizeSpecifiers:(NSArray *)specs {
+    NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+    for (id spec in specs) {
+        NSString *name = [spec name];
+        if (name.length) {
+            [spec setName:[bundle localizedStringForKey:name value:name table:@"Root"]];
+        }
+        NSString *footer = [spec propertyForKey:@"footerText"];
+        if ([footer isKindOfClass:[NSString class]] && footer.length) {
+            [spec setProperty:[bundle localizedStringForKey:footer value:footer table:@"Root"]
+                       forKey:@"footerText"];
+        }
+    }
 }
 
 // Bouton "Respring" : enregistre les préférences, relance SpringBoard, puis

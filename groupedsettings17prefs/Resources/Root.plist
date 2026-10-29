@@ -7,10 +7,10 @@
 		<dict>
 			<key>cell</key>
 			<string>PSGroupCell</string>
+			<key>footerText</key>
+			<string>Displays Settings full width, without rounded corners. After a change, tap Respring: Settings closes and reloads this setting the next time it opens.</string>
 			<key>label</key>
 			<string>GroupedSettings17</string>
-			<key>footerText</key>
-			<string>Affiche Réglages en pleine largeur, sans coins arrondis. Après un changement, appuie sur Respring : Réglages se ferme et relit ce réglage à sa prochaine ouverture.</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -22,7 +22,7 @@
 			<key>key</key>
 			<string>enabled</string>
 			<key>label</key>
-			<string>Activer le style edge-to-edge</string>
+			<string>Enable edge-to-edge style</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -37,6 +37,8 @@
 			<string>Respring</string>
 		</dict>
 	</array>
+	<key>stringsTable</key>
+	<string>Root</string>
 	<key>title</key>
 	<string>GroupedSettings17</string>
 </dict>
