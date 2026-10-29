@@ -1,9 +1,9 @@
-Package: com.example.groupedsettings
-Name: GroupedSettings
-Version: 1.2.4
+Package: com.raphetsoso.groupedsettings17
+Name: GroupedSettings17
+Version: 2.0.0
 Architecture: iphoneos-arm64
-Description: Imite le style .grouped classique dans Réglages (cellules pleine largeur, sans coins arrondis)
-Maintainer: you
-Author: you
+Description: Réglages en edge-to-edge (style .grouped classique), avec interrupteur et respring dans Réglages
+Maintainer: raphetsoso
+Author: raphetsoso
 Section: Tweaks
-Depends: mobilesubstrate
+Depends: mobilesubstrate, preferenceloader
