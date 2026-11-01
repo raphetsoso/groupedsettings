@@ -1,0 +1,10 @@
+on:
+  release:
+    types: [published]
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - run: gh api repos/raphetsoso/repo/dispatches -f event_type=tweak-released
+        env:
+          GH_TOKEN: ${{ secrets.REPO_PAT }}
