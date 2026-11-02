@@ -1,7 +1,8 @@
-name: Build GroupedSettings17 (rootless, arm64e)
+name: Build GroupedSettings17 (rootless, arm64 + arm64e)
 
-# Compilation sur macOS : seul moyen d'obtenir l'ABI arm64e "new" attendue par
-# iOS 15+ (la toolchain Linux/WSL produit une ABI incompatible).
+# Built on macOS: the only way to get the "new" arm64e ABI expected by iOS 15+
+# (the Linux/WSL toolchain produces an incompatible ABI).
+# Both arm64 (A7-A11, e.g. iPhone 6S) and arm64e (A12+) slices are built.
 on:
   workflow_dispatch:
   push:
