@@ -1,6 +1,6 @@
 Package: com.raphetsoso.groupedsettings17
 Name: GroupedSettings17
-Version: 2.1.2
+Version: 2.2.0
 Architecture: iphoneos-arm64
 Description: Displays Settings edge-to-edge (classic grouped look) with a toggle and respring button in Settings
 Maintainer: raphetsoso
